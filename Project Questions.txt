@@ -1,15 +1,22 @@
 As part of your project, answer the following questions. You may discuss the concepts with others in the class, but each of you must submit your answers in your own words. 
 
 1. What opcode will blank memory initialized to 0x00 look like to the processor?
-    When converted to binary the op code is all zeros. 
+   
+   When converted to binary the op code is all zeros. 
     The last 4 bits define the function, method and register. 
     When the function bit is 0 the function is STOR, when the register bit is 0 it references the Accumulator ACC, and the method (which is indicated by the last 2 bits) specifies that the operand is used as an address. 
     So the opcode for 0x00 would be: STOR ACC, [address]. 
     When the memory is blank the address will be filled in STOR ACC, [0x0000]
     
 2. Of the 256 possible opcodes we can get from and 8-bit opcode, how many are not being used in our instruction set, i.e., how many instructions could we add for future expansions of our processor?
+
+    
+
 3. What would we need to add to our simulator to be able to include the following instructions:
 compare ACC with a constant, PUSH to or PULL from the stack, and take the 2's complement of ACC?
+
+    
+
 4. If executeInstruction() were divided into two parts, decode and execute, what additional 
 global resources would be needed for your simulator?
 
