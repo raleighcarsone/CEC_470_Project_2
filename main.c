@@ -44,12 +44,35 @@ void fetchNextInstruction(void)
 void executeInstruction(void)
 {
 /***************************************************************
+* Variables
+**************************************************************/
+uint8_t math_operation_mask = 1 << 7;
+uint8_t memory_operation_mask = ~(0xF << 4);
+uint8_t branch_operation_mask = 1 << 4;
+
+/***************************************************************
  * 1. Decode the instruction
  * 2. Call the correct function
  * 3. Update whatever registers are affected
  **************************************************************/
+
+/* Check for mathematical operation */
+if((IR & math_operation_mask) == 0x80)
+{
+    arithmethic_instruction_handle();
 }
 
+if((IR>>4) & 0xF)
+{
+
+}
+
+if((IR & branch_operation_mask) == 0x10)
+{
+    branch_instruction_handle();
+}
+
+}
 void arithmethic_instruction_handle(void)
 {
 
