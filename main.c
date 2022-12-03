@@ -47,7 +47,7 @@ void executeInstruction(void)
 * Variables
 **************************************************************/
 uint8_t math_operation_mask = 1 << 7;
-uint8_t memory_operation_mask = ~(0xF << 4);
+uint8_t memory_operation_mask = 0xF << 4;
 uint8_t branch_operation_mask = 1 << 4;
 
 /***************************************************************
@@ -62,9 +62,9 @@ if((IR & math_operation_mask) == 0x80)
     arithmethic_instruction_handle();
 }
 
-if((IR>>4) & 0xF)
+if(IR & memory_operation_mask < 0x10)
 {
-
+    memory_instruction_handle();
 }
 
 if((IR & branch_operation_mask) == 0x10)
