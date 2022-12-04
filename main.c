@@ -77,8 +77,8 @@ void arithmethic_instruction_handle(void) {
 /***************************************************************
 * Variables
 **************************************************************/
-    int numberOfBytes = 0; //for size of the instruction
-    uint8_t opcode = 0; //will hold the 8 bits of opcode
+    //int numberOfBytes = 0; //for size of the instruction
+    //uint8_t opcode = 0; //will hold the 8 bits of opcode
     unsigned int function = 0;
     unsigned int destination = 0; //holds source value being used
     unsigned int source = 0; //holds destination value
@@ -87,22 +87,15 @@ void arithmethic_instruction_handle(void) {
  * 1.
  * 2.
  * 3.
+ * loading 8 bit register: ACC = memory[PC + 1]
+ * loading 16 bit register: MAR = (memory[PC+1] << 8) + memory[PC+2]
+ * does this mean I loaded opcode wrong?
  **************************************************************/
 
     //identifies 8 bits of opcode
-    numberOfBytes = sizeof(memory[PC]); //find size of instruction as it can be 1, 2, or 3 bytes
-    if (numberOfBytes == 1) {
-        opcode = memory[PC];
-    }
-    if (numberOfBytes == 2) {
-        opcode = memory[PC] >> 8;
-    }
-    if (numberOfBytes == 3) {
-        opcode = memory[PC] >> 16;
-    }
-    source = opcode << 6; //right two bits
-    destination = (opcode & 12) >> 2; //12=1100. middle two bits
-    function = (opcode & 112) >> 4; //112=01110000. middle 3 bits
+    source = IR << 6; //right two bits
+    destination = (IR & 12) >> 2; //12=1100. middle two bits
+    function = (IR & 112) >> 4; //112=01110000. middle 3 bits
 
     //store two values being used with switch statements
     switch (source) {
