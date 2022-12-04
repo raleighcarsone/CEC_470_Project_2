@@ -3,4 +3,4 @@ project(CEC_470_Project_2 C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(CEC_470_Project_2 main.c)
+add_executable(CEC_470_Project_2 main.c memory_instruction_lib.h)
