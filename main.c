@@ -178,32 +178,46 @@ void arithmethic_instruction_handle(void) {
 
 }
 
+//I do not know where to branch to so I set up the condition statements
 void branch_instruction_handle(void)
-{
-    switch (IR & 0x07)
+{ uint8_t branch_opcode = (IR<<5)>>5;
+    switch (branch_opcode)
     {
         case 0: // Unconditional branch -- Load PC with (memory[pc+1] << 8) + memory[pc+2]
-            B target_label
+           // B target_label
+           PC= [MAR] ;
             break;
         case 1: // Branch if ACC=0
             // Branch if Zero (BRZ)
-            BRZ $register, $register, target_label
-
+           // BRZ $register, $register, target_label
+            if (ACC==0)
+                PC=[MAR]
+            break
         case 2: // Branch if ACC!=0
             // Branch on not equal(BNE)
-            BNE $register, $register, target_label
+           // BNE $register, $register, target_label
+           if (ACC!=0)
+           break
         case 3: // Branch if ACC<0
             // Branch if less than (BLT)
-            BLT $register, $register, target_label
+           // BLT $register, $register, target_label
+           if (((ACC&(1<<7)))!=0)
+           break
         case 4: // Branch if ACC<=0
             // Branch if less than or Equal(BLE)
-            BLE $register, $register, target_label
+           // BLE $register, $register, target_label
+           if (((ACC&(1<<7)))!=0) || (ACC!=0)
+           break
         case 5: // Branch if ACC>0
             //Branch if greater than (BGT)
-            BGT $register, $register, target_label
+           // BGT $register, $register, target_label
+           if (((ACC&(1<<7)))==0) || (ACC!=0)
+           break
         case 6: // Branch if ACC>=0
             // Branch if greater than or equal(BGE)
-            BGE $register, $register, target_label
+            // BGE $register, $register, target_label
+            if (((ACC&(1<<7)))==0) || (ACC==0)
+            break
 }
 
 
