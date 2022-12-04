@@ -9,10 +9,12 @@ As part of your project, answer the following questions. You may discuss the con
     When the memory is blank the address will be filled in STOR ACC, [0x0000]
     
 2. Of the 256 possible opcodes we can get from and 8-bit opcode, how many are not being used in our instruction set, i.e., how many instructions could we add for future expansions of our processor?
-   there are 109 possible opcodes that are not used by our processor. 
+   
+   there are 107 possible opcodes that are not used by our processor. 
       Branching uses 7 opcodes
       Memory uses 12 opcodes
       Mathmatical uses 128 opcodes  
+      and there are 2 special opcodes
 
 3. What would we need to add to our simulator to be able to include the following instructions: 
 compare ACC with a constant, 
