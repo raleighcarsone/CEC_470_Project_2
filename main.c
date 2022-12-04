@@ -73,8 +73,108 @@ if((IR & branch_operation_mask) == 0x10)
 }
 
 }
-void arithmethic_instruction_handle(void)
-{
+void arithmethic_instruction_handle(void) {
+/***************************************************************
+* Variables
+**************************************************************/
+    int numberOfBytes = 0; //for size of the instruction
+    uint8_t opcode = 0; //will hold the 8 bits of opcode
+    unsigned int function = 0;
+    unsigned int destination = 0; //holds source value being used
+    unsigned int source = 0; //holds destination value
+
+/***************************************************************
+ * 1.
+ * 2.
+ * 3.
+ **************************************************************/
+
+    //identifies 8 bits of opcode
+    numberOfBytes = sizeof(memory[PC]); //find size of instruction as it can be 1, 2, or 3 bytes
+    if (numberOfBytes == 1) {
+        opcode = memory[PC];
+    }
+    if (numberOfBytes == 2) {
+        opcode = memory[PC] >> 8;
+    }
+    if (numberOfBytes == 3) {
+        opcode = memory[PC] >> 16;
+    }
+    source = opcode << 6; //right two bits
+    destination = (opcode & 12) >> 2; //12=1100. middle two bits
+    function = (opcode & 112) >> 4; //112=01110000. middle 3 bits
+
+    //store two values being used with switch statements
+    switch (source) {
+        case 0: //indirect (MAR used as pointer)
+            source = memory[MAR];
+            break;
+        case 1: //accumulator ACC
+            source = ACC;
+            break;
+        case 2: //constant
+            source = 0; //WHAT IS CONSTANT
+            break;
+        case 3: //memory
+            source = memory[PC];
+            break;
+    }
+    switch (destination) {
+        case 0: //indirect (MAR used as pointer)
+            destination = memory[MAR];
+            break;
+        case 1: //accumulator ACC
+            destination = ACC;
+            break;
+        case 2: //address register MAR
+            destination = MAR;
+            break;
+        case 3: //memory
+            destination = memory[PC];
+            break;
+    }
+    //now perform function and save back to proper destination
+    switch (function){
+        case 0: //AND
+            destination = source & destination;
+            break;
+        case 1: //OR
+            destination = source | destination;
+            break;
+        case 2: //XOR
+            destination = source ^ destination;
+            break;
+        case 3: //ADD
+            destination = source + destination;
+            break;
+        case 4: //SUB
+            destination = source - destination;
+            break;
+        case 5: //INC
+            destination = source++;
+            break;
+        case 6: //DEC
+            destination = source--;
+            break;
+        case 7: //NOT
+            destination = ~source;
+            break;
+    }
+
+    switch(destination){
+        case 0: //indirect (MAR used as pointer)
+            memory[MAR] = destination;
+            break;
+        case 1: //accumulator ACC
+            ACC = destination;
+            break;
+        case 2: //address register MAR
+            MAR = destination;
+            break;
+        case 3: //memory
+            memory[PC] = destination;
+            break;
+    }
 
 }
 
