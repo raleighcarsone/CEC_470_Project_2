@@ -68,7 +68,9 @@ int main(int argc, char* argv[])
 **************************************************************************/
 void fetchNextInstruction(void)
 {
-    IR = memory[PC++];
+    IR = memory[PC];
+    PC = PC + 1;
+    //in function need to determine if it is 2 or 3 bytes to increment PC according
 }
 
 /*************************************************************************
@@ -141,24 +143,24 @@ void arithmethic_instruction_handle(void) {
             source = ACC;
             break;
         case 2: //constant
-            source = 0; //WHAT IS CONSTANT
+            source = memory[PC]; //WHAT IS CONSTANT
             break;
-        case 3: //memory
-            source = memory[PC];
+        case 3: //memory address
+            source = (memory[PC] << 8)+ memory[PC++]; //address is 16 bits
             break;
     }
     switch (destination) {
-        case 0: //indirect (MAR used as pointer)
+        case 0: //indirect (MAR used as pointer) is 8 bits
             destination = memory[MAR];
             break;
-        case 1: //accumulator ACC
+        case 1: //accumulator ACC is 8 bits
             destination = ACC;
             break;
-        case 2: //address register MAR
+        case 2: //address register MAR is 16 bits. only time constant is 2 bytes
             destination = MAR;
             break;
         case 3: //memory
-            destination = memory[PC];
+            destination = (memory[PC] << 8)+ memory[PC++];
             break;
     }
     //now perform function and save back to proper destination
@@ -179,10 +181,10 @@ void arithmethic_instruction_handle(void) {
             destination = source - destination;
             break;
         case 5: //INC
-            destination = source++;
+            destination = destination++;
             break;
         case 6: //DEC
-            destination = source--;
+            destination = destination--;
             break;
         case 7: //NOT
             destination = ~source;
@@ -192,6 +194,7 @@ void arithmethic_instruction_handle(void) {
     switch(destination){
         case 0: //indirect (MAR used as pointer)
             memory[MAR] = destination;
+            //MAR=(memory[address] << 8) + memory[address+1]
             break;
         case 1: //accumulator ACC
             ACC = destination;
