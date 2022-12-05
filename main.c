@@ -130,25 +130,10 @@ void arithmethic_instruction_handle(void) {
  **************************************************************/
 
     //identifies 8 bits of opcode
-    source = IR << 6; //right two bits
-    destination = (IR & 12) >> 2; //12=1100. middle two bits
-    function = (IR & 112) >> 4; //112=01110000. middle 3 bits
+    source = IR & 3; //3=11. right two bits. use in decimal
+    destination = (IR & 12) >> 2; //12=1100. middle two bits. use in decimal
+    function = IR & 112; //112=01110000. middle 3 bits. use with hex
 
-    //store two values being used with switch statements
-    switch (source) {
-        case 0: //indirect (MAR used as pointer)
-            source = memory[MAR];
-            break;
-        case 1: //accumulator ACC
-            source = ACC;
-            break;
-        case 2: //constant
-            source = memory[PC]; //WHAT IS CONSTANT
-            break;
-        case 3: //memory address
-            source = (memory[PC] << 8)+ memory[PC++]; //address is 16 bits
-            break;
-    }
     switch (destination) {
         case 0: //indirect (MAR used as pointer) is 8 bits
             destination = memory[MAR];
@@ -163,30 +148,48 @@ void arithmethic_instruction_handle(void) {
             destination = (memory[PC] << 8)+ memory[PC++];
             break;
     }
+    //store two values being used with switch statements
+    switch (source) {
+        case 0: //indirect (MAR used as pointer)
+            source = memory[MAR];
+            break;
+        case 1: //accumulator ACC
+            source = ACC;
+            break;
+        case 2: //constant
+            source = memory[PC];
+            if (destination==2){ //constant will be 16 bits if the destination is MAR. 8 otherwise
+                source = (memory[PC] << 8)+ memory[PC++];
+            }
+            break;
+        case 3: //memory address
+            source = (memory[PC] << 8)+ memory[PC++]; //address is 16 bits
+            break;
+    }
     //now perform function and save back to proper destination
     switch (function){
-        case 0: //AND
+        case 0x00: //AND
             destination = source & destination;
             break;
-        case 1: //OR
+        case 0x10: //OR
             destination = source | destination;
             break;
-        case 2: //XOR
+        case 0x20: //XOR
             destination = source ^ destination;
             break;
-        case 3: //ADD
+        case 0x30: //ADD
             destination = source + destination;
             break;
-        case 4: //SUB
+        case 0x40: //SUB
             destination = source - destination;
             break;
-        case 5: //INC
+        case 0x50: //INC
             destination = destination++;
             break;
-        case 6: //DEC
+        case 0x60: //DEC
             destination = destination--;
             break;
-        case 7: //NOT
+        case 0x70: //NOT
             destination = ~source;
             break;
     }
@@ -194,7 +197,6 @@ void arithmethic_instruction_handle(void) {
     switch(destination){
         case 0: //indirect (MAR used as pointer)
             memory[MAR] = destination;
-            //MAR=(memory[address] << 8) + memory[address+1]
             break;
         case 1: //accumulator ACC
             ACC = destination;
