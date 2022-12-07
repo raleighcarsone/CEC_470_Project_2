@@ -15,16 +15,18 @@ As part of your project, answer the following questions. You may discuss the con
       Memory uses 12 opcodes
       Mathmatical uses 128 opcodes  
       and there are 2 special opcodes
+      total opcodes used: 149 
+    
 
 3. What would we need to add to our simulator to be able to include the following instructions: compare ACC with a constant, PUSH to or PULL from the stack, and take the 2's complement of ACC?
    
    Comparing ACC to constant:
-      We would need a new register to hold the constant that we are comparing and flags to hold the results. and a unique opcode to trigger it.
+      We would need a new register to hold the constant that we are comparing and flags to hold the results. and a special opcode to trigger it.
    Push to or Pull from:
-      We would need a register to hold the pointer for the place in memory for the stack and a unique opcode for push and pull
+      We would need a register to hold the pointer for the place in memory for the stack and a special opcode for push and pull
     Taking twos complement:
       Using the algebra code that we already have the 2s complement can be implemented (using a not gate and an adder). the problem here is that all of the opcodes have been assigned to specific values (when the most signifigant bit is 1). 
-      the way that I would choose to implement a 2s complement in a special op by assigning an origional opcode having a register to flip the bits and one to hold the constant 1 which will be added to the flipped bits and the sum will be stored in the origional register.
+      the way that I would choose to implement a the 2s complement in a special opcode by assigning an origional opcode having a register to flip the bits and one to hold the constant 1 which will be added to the flipped bits and the sum will be stored in the origional register.
 
 4. If executeInstruction() were divided into two parts, decode and execute, what additional global resources would be needed for your simulator?
    In order to subdivide the executeInstruction() into 2 parts (decode and execute) we would need to include a register to pass the information from the decode part to the execute part. add another global register to hold the decoded instrustion 
