@@ -129,44 +129,48 @@ void arithmethic_instruction_handle(void) {
  * does this mean I loaded opcode wrong?
  **************************************************************/
 
-    //identifies 8 bits of opcode
+///////identifies 8 bits of opcode////////////////////////////////////////
     source = IR & 3; //3=11. right two bits. use in decimal
     destination = (IR & 12) >> 2; //12=1100. middle two bits. use in decimal
     function = IR & 112; //112=01110000. middle 3 bits. use with hex
+////////////////////////////////////////////////////////////////////////////
 
+//////////get destination and source and save to variable//////////////////////
     switch (destination) {
-        case 0: //indirect (MAR used as pointer) is 8 bits
+        case 0: //indirect (MAR used as pointer) is 8 bits. +0
             destination = memory[MAR];
             break;
-        case 1: //accumulator ACC is 8 bits
+        case 1: //accumulator ACC is 8 bits. +0
             destination = ACC;
             break;
-        case 2: //address register MAR is 16 bits. only time constant is 2 bytes
+        case 2: //address register MAR is 16 bits. only time constant is 2 bytes. +1
             destination = MAR;
             break;
-        case 3: //memory
+        case 3: //memory. +2
             destination = (memory[PC] << 8)+ memory[PC++];
             break;
     }
     //store two values being used with switch statements
     switch (source) {
-        case 0: //indirect (MAR used as pointer)
+        case 0: //indirect (MAR used as pointer). +0
             source = memory[MAR];
             break;
-        case 1: //accumulator ACC
+        case 1: //accumulator ACC. +0
             source = ACC;
             break;
-        case 2: //constant
+        case 2: //constant +1 or 2
             source = memory[PC];
             if (destination==2){ //constant will be 16 bits if the destination is MAR. 8 otherwise
                 source = (memory[PC] << 8)+ memory[PC++];
             }
             break;
-        case 3: //memory address
+        case 3: //memory address. +2
             source = (memory[PC] << 8)+ memory[PC++]; //address is 16 bits
             break;
     }
-    //now perform function and save back to proper destination
+///////////////////////////////////////////////////////////////////////////////
+
+//////////////now perform function/////////////////////////////////////////
     switch (function){
         case 0x00: //AND
             destination = source & destination;
@@ -193,7 +197,9 @@ void arithmethic_instruction_handle(void) {
             destination = ~source;
             break;
     }
+/////////////////////////////////////////////////////////////////////////
 
+///////save back to proper place///////////////////////////////////////
     switch(destination){
         case 0: //indirect (MAR used as pointer)
             memory[MAR] = destination;
@@ -208,7 +214,30 @@ void arithmethic_instruction_handle(void) {
             memory[PC] = destination;
             break;
     }
+///////////////////////////////////////////////////////////////////////////
 
+///////need to increment PC for next opcode run//////////////////////////////////////////////////
+    switch (destination) {
+        case 2: //address register MAR is 16 bits. only time constant is 2 bytes. +1
+            PC=PC+1;
+            break;
+        case 3: //memory. +2
+            PC=PC+2;
+            break;
+    }
+    //store two values being used with switch statements
+    switch (source) {
+        case 2: //constant. +1 or 2
+            PC=PC+1;
+            if (destination==2){ //constant will be 16 bits if the destination is MAR. 8 otherwise
+                PC=PC+1;
+            }
+            break;
+        case 3: //memory address. +2
+            PC=PC+2; //address is 16 bits
+            break;
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 //I do not know where to branch to so I set up the condition statements
