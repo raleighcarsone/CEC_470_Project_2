@@ -10,6 +10,8 @@ void executeInstruction(void);
 void arithmethic_instruction_handle(void);
 void branch_instruction_handle(void);
 void memory_instruction_handle(void);
+void halt_instruction_handle(void);
+void NOP_instruction_handle(void);
 
 //unsigned char memory[65536];
 unsigned char ACC = 0;
@@ -66,7 +68,7 @@ int main(int argc, char* argv[])
     for (int i = 0; i < 65536; i++) {
         if(memory[i] != expected_output[i])
         {
-            printf("#%d\t Error at memory index %d, opcode: 0x%02x, expected: 0x%02x, actual 0x%02x\n", error_counter, i, opcodes[i], memory[i], expected_output[i]);
+            printf("#%d\t Error at memory index %d, opcode: 0x%02x, expected: 0x%02x, actual 0x%02x\n", error_counter, i, opcodes[i], expected_output[i], memory[i]);
             error_counter += 1;
         }
     }
@@ -98,7 +100,7 @@ void executeInstruction(void)
 * Local Variables
 **************************************************************/
     uint8_t math_operation_mask = 1 << 7;
-    uint8_t memory_operation_mask = 0xF << 4;
+    uint8_t memory_operation_mask = 0xF0;
     uint8_t branch_operation_mask = 1 << 4;
 
 /***************************************************************
@@ -113,22 +115,22 @@ void executeInstruction(void)
         arithmethic_instruction_handle();
     }
 
-    elseif(IR & memory_operation_mask < 0x10)
+    else if((IR & memory_operation_mask) == 0)
     {
         memory_instruction_handle();
     }
 
-    elseif((IR & branch_operation_mask) == 0x10)
+    else if((IR & branch_operation_mask) == 0x10)
     {
         branch_instruction_handle();
     }
-    elseif (IR == 000110012)
+    else if (IR == 0x19)
     {
         halt_instruction_handle();
     }
-    elseif (IR == 000110002)
+    else if (IR == 0x18)
     {
-        NOOP_instruction_handle();
+        NOP_instruction_handle();
     }
 
 }
@@ -316,11 +318,11 @@ void memory_instruction_handle(void)
 /***************************************************************
 * Local Variables
 **************************************************************/
-    uint8_t  method;
-    uint8_t  register_;
-    uint8_t  function;
-    uint16_t data1;
-    uint16_t pc_offset;
+    uint8_t  method = 0;
+    uint8_t  register_ = 0;
+    uint8_t  function = 0 ;
+    uint16_t data1 = 0;
+    uint16_t pc_offset = 0;
 
 /******************************************************
 * Check instruction bit [2] for "Register":
@@ -353,18 +355,19 @@ void memory_instruction_handle(void)
     switch(method)
     {
         case (0):
-            data1 = (memory[PC + 1] << 8) + memory[PC + 2];
+            data1 = (memory[PC] << 8) + memory[PC + 1];
+            pc_offset = 1;
             break;
 
         case (1):
             if(register_ == REG_ACC)
             {
-                data1 = memory[PC+1];
-                pc_offset = 1;
+                data1 = memory[PC];
+//                pc_offset = 1;
             }else if (register_ == REG_IR_MAR)
             {
-                data1 = (memory[PC + 1] << 8) + memory[PC + 2];
-                pc_offset = 2;
+                data1 = (memory[PC] << 8) + memory[PC + 1];
+                pc_offset = 1;
             }
             break;
 
@@ -399,14 +402,14 @@ void memory_instruction_handle(void)
             break;
     }
     /* Increment program counter (PC) */
-    PC += pc_offset;
+    PC += pc_offset+1;
 
 }
  void halt_instruction_handle(void)
  {
     memory[PC] = HALT_OPCODE; 
  }
-void NOOP_instruction_handle(void)
+void NOP_instruction_handle(void)
 {
    PC +=1; 
 }
