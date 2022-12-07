@@ -11,14 +11,17 @@ void arithmethic_instruction_handle(void);
 void branch_instruction_handle(void);
 void memory_instruction_handle(void);
 
-unsigned char memory[65536];
+//unsigned char memory[65536];
 unsigned char ACC = 0;
 unsigned char IR = 0;
 unsigned int MAR = 0;
 unsigned int PC = 0;
+uint8_t error_counter = 1;
+uint8_t opcodes[65536] = {};
 
 int main(int argc, char* argv[])
 {
+#if 0
 /*************************************************************************
 * Read memory data in from mem_in.txt
 **************************************************************************/
@@ -50,6 +53,7 @@ int main(int argc, char* argv[])
             memory[i/3] = s1 + s0;
         }
     }
+#endif
 
     // Execution loop. Continue fetching and executing
     // until PC points a HALT instruction
@@ -58,6 +62,15 @@ int main(int argc, char* argv[])
         fetchNextInstruction();
         executeInstruction();
     }
+
+    for (int i = 0; i < 65536; i++) {
+        if(memory[i] != expected_output[i])
+        {
+            printf("#%d\t Error at memory index %d, opcode: 0x%02x, expected: 0x%02x, actual 0x%02x\n", error_counter, i, opcodes[i], memory[i], expected_output[i]);
+            error_counter += 1;
+        }
+    }
+    printf("Test Complete");
     return 0;
 }
 
@@ -69,6 +82,7 @@ int main(int argc, char* argv[])
 void fetchNextInstruction(void)
 {
     IR = memory[PC];
+    opcodes[PC] = IR;
     PC = PC + 1;
     //in function need to determine if it is 2 or 3 bytes to increment PC according
 }
