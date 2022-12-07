@@ -403,3 +403,10 @@ void memory_instruction_handle(void)
 
 }
  void halt_instruction_handle(void)
+ {
+    memory[PC] = HALT_OPCODE; 
+ }
+void NOOP_instruction_handle(void)
+{
+   PC +=1; 
+}
