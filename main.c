@@ -113,14 +113,22 @@ void executeInstruction(void)
         arithmethic_instruction_handle();
     }
 
-    if(IR & memory_operation_mask < 0x10)
+    elseif(IR & memory_operation_mask < 0x10)
     {
         memory_instruction_handle();
     }
 
-    if((IR & branch_operation_mask) == 0x10)
+    elseif((IR & branch_operation_mask) == 0x10)
     {
         branch_instruction_handle();
+    }
+    elseif (IR == 000110012)
+    {
+        halt_instruction_handle();
+    }
+    elseif (IR == 000110002)
+    {
+        NOOP_instruction_handle();
     }
 
 }
@@ -390,8 +398,8 @@ void memory_instruction_handle(void)
             }
             break;
     }
-
     /* Increment program counter (PC) */
     PC += pc_offset;
 
 }
+ void halt_instruction_handle(void)
